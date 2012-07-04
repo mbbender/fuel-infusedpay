@@ -1,0 +1,9 @@
+InfusedPay is a payment processor package for the fuel framework.
+
+It's purpose is to abstract the complexities of processing payments with various processors. 
+
+Supported Processors
+*Authorize.net
+
+Fully Tested
+test group InfusedPay
