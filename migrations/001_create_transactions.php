@@ -8,7 +8,7 @@ class Create_transactions
 	public function up()
 	{
 		\DBUtil::create_table('transactions', array(
-			'id' => array('constraint' => 10, 'type' => 'int', 'auto_increment' => true),
+			'id' => array('type' => 'int unsigned', 'auto_increment' => true),
 			'third_party_transaction_id' => array('constraint'=>50, 'type'=>'varchar'),
             'type' => array('constraint'=>50, 'type'=>'varchar'),
             'ship_to_first' => array('constraint'=>255, 'type'=>'varchar'),
