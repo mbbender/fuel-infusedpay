@@ -7,3 +7,4 @@ Supported Processors
 
 Fully Tested
 test group InfusedPay
+    $ php oil test --group=InfusedPay
