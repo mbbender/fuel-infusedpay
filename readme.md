@@ -5,8 +5,8 @@ credit card payments, issuing refunds and voiding transactions with common payme
 also has a well defined interface for adding your own payment gateways if one is not already supported.
 
 ## Supported Gateways
-### Authorize.net
-### Paypal
+- Authorize.net
+- Paypal
 
 ## Installation
 Add the git submodule
