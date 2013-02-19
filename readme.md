@@ -11,11 +11,11 @@ also has a well defined interface for adding your own payment gateways if one is
 ## Installation
 Add the git submodule
 
-    git submodule add git://github.com/michael-bender/infusedpay.git
+    `git submodule add git://github.com/michael-bender/infusedpay.git`
 
 Run the migration (make sure you have your package path set in config FuelPHP V < 2)
 
-    php oil r migrate --packages=infusedpay
+    `php oil r migrate --packages=infusedpay`
 
 Now go use the dern thang!
 
@@ -30,6 +30,6 @@ To run tests you must configure the authorizenet.php config to your app with val
 
 test group InfusedPay
 
-    $ php oil test --group=InfusedPay
+    `$ php oil test --group=InfusedPay`
 
 
