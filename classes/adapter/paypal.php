@@ -5,7 +5,7 @@ namespace InfusedPay;
 
 class Adapter_Paypal extends Adapter
 {
-    public function _charge(Model_Transaction $trans)
+    public function _charge(Model_Transaction $trans, $method = null)
     {
 
     }

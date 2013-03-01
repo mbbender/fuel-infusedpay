@@ -20,6 +20,8 @@ Autoloader::add_classes(array(
     'InfusedPay\\Model_Transaction'                      =>__DIR__.'/classes/model/transaction.php',
     'InfusedPay\\Observer_MaskCreditCard'               =>__DIR__.'/classes/model/transaction.php',
     'InfusedPay\\Model_Lineitem'                      =>__DIR__.'/classes/model/lineitem.php',
+    'InfusedPay\\TransactionFormatter'                      =>__DIR__.'/classes/transactionformatter.php',
+    'InfusedPay\\TransactionProcessor'                      =>__DIR__.'/classes/transactionprocessor.php',
 
     'InfusedPay\\Adapter'                          => __DIR__.'/classes/adapter.php',
     'InfusedPay\\AdapterException'                 => __DIR__.'/classes/adapter.php',

@@ -26,7 +26,9 @@ Coming soon...
 Coming soon...
 
 ## Fully Tested
-To run tests you must configure the authorizenet.php config to your app with valid test system credentials and then run
+To run tests you must configure the authorizenet.php config with valid test system credentials, and if you have changed the
+ FUEL_ENV variable you must change it back to TEST or DEVELOPMENT (It will automatically be TEST if you haven't overriden it)
+ and then run
 
 test group InfusedPay
 

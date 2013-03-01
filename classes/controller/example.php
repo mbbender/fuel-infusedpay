@@ -17,7 +17,7 @@ class Controller_Example extends \Controller
     {
         $this->charge_transaction = Model_Transaction::forge(array(
             'amount' => 1,
-            'card_number' => '4111111111111111',
+            'card_number' => '4007000000027',
             'card_expiration' => strtotime("+1 year")
         ));
 

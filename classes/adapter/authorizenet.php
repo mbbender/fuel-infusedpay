@@ -10,9 +10,10 @@ class Adapter_Authorizenet extends Adapter
 {
     const NAME = 'authorizenet';
 
-    protected static $api;
+    protected $api;
 
-    public $debug = false;
+    protected $debug = false;
+    protected $test_cards =  ['370000000000002','6011000000000012','4007000000027','4012888818888','3088000000000017','38000000000006'];
 
     protected $transaction_key;
     protected $api_id;
@@ -20,10 +21,12 @@ class Adapter_Authorizenet extends Adapter
 
     public function __construct($credentials,$debug_on = false)
     {
+        parent::__construct($credentials);
+
         \Config::load('authorizenet','infusedpay');
 
         //Setup debug mode
-        if(\Fuel::$env == \Fuel::TEST OR \Fuel::$env == \Fuel::DEVELOPMENT OR $debug_on) $this->debug = true;
+        if(\Fuel::$env == \Fuel::TEST OR \Fuel::$env == \Fuel::DEVELOPMENT OR \Fuel::$env == 'local' OR $debug_on) $this->debug = true;
 
 
         $this->name = static::NAME;
@@ -35,17 +38,19 @@ class Adapter_Authorizenet extends Adapter
         if(empty($this->transaction_key)) throw new PaymentGatewayInvalidException('Invalid gateway credentials were provided. transaction_key is empty.', 4);
         if(empty($this->api_id)) throw new PaymentGatewayInvalidException('Invalid gateway credentials were provided. api_id is empty.', 4);
 
+        // todo: Abstract switch statement into a strategy configuration
         switch(\Config::get('infusedpay.authorizenet_api','AIM'))
         {
             case 'AIM':
-                static::$api = new \AuthorizeNetAIM($this->api_id,$this->transaction_key);
-                if($this->debug) static::$api->duplicate_window = 0;
+                $this->api = new \AuthorizeNetAIM($this->api_id,$this->transaction_key);
+                if($this->debug) $this->api->duplicate_window = 0;
                 break;
             default:
                 throw new AdapterException('Invalid or unsupported api method set in adapter configuration file.',0);
         }
 
-        static::$api->setSandbox($this->debug);
+        // this is sepcific to AIM
+        $this->api->setSandbox($this->debug);
     }
 
     /*
@@ -56,13 +61,16 @@ class Adapter_Authorizenet extends Adapter
     {
         $this->_format_transaction($trans);
 
+        // Set Debug Mode if card is a test card number
+        if(in_array($trans->card_number,$this->test_cards)) $this->api->setSandbox(true);
+
         if(empty($method)) $method = static::AUTH_CAPTURE;
 
         $api_func = null;
         switch($method)
         {
             case static::AUTH_CAPTURE:
-                $response = static::$api->authorizeAndCapture(
+                $response = $this->api->authorizeAndCapture(
                     $trans->amount,
                     $trans->card_number,
                     date('m',time($trans->card_expiration)).date('y',time($trans->card_expiration)));
@@ -84,13 +92,13 @@ class Adapter_Authorizenet extends Adapter
     protected function _refund(Model_Transaction $trans, $amount = null)
     {
         $amount = empty($amount) ? $trans->amount : $amount;
-        $gateway_response = static::$api->credit($trans->third_party_transaction_id,$amount,$trans->card_number);
+        $gateway_response = $this->api->credit($trans->third_party_transaction_id,$amount,$trans->card_number);
         return $this->_process_response($gateway_response);
     }
 
     protected function _void(Model_Transaction $trans)
     {
-        $gateway_response = static::$api->void($trans->third_party_transaction_id);
+        $gateway_response = $this->api->void($trans->third_party_transaction_id);
         return $this->_process_response($gateway_response);
     }
 
@@ -136,38 +144,39 @@ class Adapter_Authorizenet extends Adapter
 
         */
         try{
-            static::$api->ship_to_first_name = $t->ship_to_first;
-            static::$api->ship_to_last_name = $t->ship_to_last;
-            static::$api->ship_to_company = $t->ship_to_company;
-            static::$api->ship_to_address = $t->ship_to_address;
-            static::$api->ship_to_city = $t->ship_to_city;
-            static::$api->ship_to_state = $t->ship_to_state;
-            static::$api->ship_to_zip = $t->ship_to_zipcode;
-            static::$api->ship_to_country = $t->ship_to_country;
-            static::$api->first_name = $t->bill_to_first;
-            static::$api->last_name = $t->bill_to_last;
-            static::$api->company = $t->bill_to_company;
-            static::$api->address = $t->bill_to_address;
-            static::$api->city = $t->bill_to_city;
-            static::$api->state = $t->bill_to_state;
-            static::$api->zip = $t->bill_to_zipcode;
-            static::$api->country = $t->bill_to_country;
-            static::$api->phone = $t->bill_to_phone;
-            static::$api->email = $t->bill_to_email;
-            //static::$api->amount = $t->currency;
-            static::$api->amount = $t->amount;
-            static::$api->tax = $t->tax;
-            static::$api->freight = $t->freight;
-            //static::$api->amount = $t->card_holder_first_name;
-            //static::$api->amount = $t->card_holder_last_name;
-            static::$api->card_num = $t->card_number;
-            static::$api->card_code = $t->card_cvv;
-            static::$api->exp_date = date('m',time($t->card_expiration)).date('y',time($t->card_expiration));
-            static::$api->trans_id = $t->third_party_transaction_id;
+            $this->api->ship_to_first_name = $t->ship_to_first;
+            $this->api->ship_to_last_name = $t->ship_to_last;
+            $this->api->ship_to_company = $t->ship_to_company;
+            $this->api->ship_to_address = $t->ship_to_address1.' '.$t->ship_to_address2;
+            $this->api->ship_to_city = $t->ship_to_city;
+            $this->api->ship_to_state = $t->ship_to_state;
+            $this->api->ship_to_zip = $t->ship_to_zipcode;
+            $this->api->ship_to_country = $t->ship_to_country;
+            $this->api->first_name = $t->bill_to_first;
+            $this->api->last_name = $t->bill_to_last;
+            $this->api->company = $t->bill_to_company;
+            $this->api->address = $t->bill_to_address1.' '.$t->bill_to_address2;
+            $this->api->city = $t->bill_to_city;
+            $this->api->state = $t->bill_to_state;
+            $this->api->zip = $t->bill_to_zipcode;
+            $this->api->country = $t->bill_to_country;
+            $this->api->phone = $t->bill_to_phone;
+            $this->api->email = $t->bill_to_email;
+            //$this->api->amount = $t->currency;
+            $this->api->amount = $t->amount;
+            $this->api->tax = $t->tax;
+            $this->api->freight = $t->freight;
+            //$this->api->amount = $t->card_holder_first_name;
+            //$this->api->amount = $t->card_holder_last_name;
+            $this->api->card_num = $t->card_number;
+            $this->api->card_code = $t->card_cvv;
+            $this->api->exp_date = date('m',time($t->card_expiration)).date('y',time($t->card_expiration));
+            $this->api->trans_id = $t->third_party_transaction_id;
 
             foreach($t->lineitems as $li)
             {
-                static::$api->addLineItem($li->sku,$li->name,$li->description,$li->quantity,$li->unit_price,$li->taxable);
+                if(strlen($li->sku) > 31) throw new Exception('Authorize.net does not support SKUs longer than 31 characters.');
+                $this->api->addLineItem($li->sku,substr($li->name,0,31),substr($li->description,0,255),$li->quantity,$li->unit_price,$li->taxable);
             }
         }
 
@@ -176,7 +185,7 @@ class Adapter_Authorizenet extends Adapter
             throw new AdapterException($e->getMessage());
         }
 
-        return  static::$api->amount = $t;
+        return  $this->api->amount = $t;
     }
 
     // Should return TRUE if all went well or throw a FailedTransactionException

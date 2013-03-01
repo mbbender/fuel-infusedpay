@@ -26,41 +26,60 @@ abstract class Adapter
     const CAPTURE_ONLY = 'captureOnly';
     const PRIOR_AUTH_CAPTURE = 'priorAuthCapture';
 
+    const TYPE_CHARGE = 'charge';
+    const TYPE_REFUND = 'refund';
+    const TYPE_VOID = 'void';
+
     /**
      * @var  string  Adapter name
      */
     public $name;
 
+    /**
+     * @var mixed Adapter credentials
+     */
+    protected $_credentials;
 
-    public static function forge($adapter)
+    public function __construct($credentials)
     {
-        $class = 'InfusedPay\\Adapter_'.ucfirst($adapter);
-
-        return new $class;
+        $this->_credentials = $credentials;
     }
+
 
     public function charge(Model_Transaction $trans)
     {
         $this->_charge($trans);
-        $trans->type = 'charge';
+        $trans->type = self::TYPE_CHARGE;
         $trans->save();
     }
 
     public function refund(Model_Transaction $trans)
     {
         $this->_refund($trans);
-        $trans->type = 'refund';
+        $trans->type = self::TYPE_REFUND;
         $trans->save();
     }
 
     public function void(Model_Transaction $trans)
     {
         $this->_void($trans);
-        $trans->type = 'void';
+        $trans->type = self::TYPE_VOID;
         $trans->save();
     }
 
-    protected abstract function _charge(Model_Transaction $trans);
+    public function get_credentials()
+    {
+        return $this->_credentials;
+    }
+
+    /**
+     * @abstract
+     * @param Model_Transaction $trans
+     * @param $method Should be one of the consts of AUTH_CAPTURE, AUTH_ONLY, CAPTURE_ONLY, PRIOR_AUTH_CAPTURE
+     * @return boolean TRUE if success
+     * @throws FailedTransactionException if transaction did not process
+     */
+    protected abstract function _charge(Model_Transaction $trans, $method=null);
     protected abstract function _refund(Model_Transaction $trans);
     protected abstract function _void(Model_Transaction $trans);
 

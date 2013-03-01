@@ -54,9 +54,9 @@ use Lang;
 use Arr;
 use Config;
 
-class PaymentGatewayInvalidException extends \FuelException{}
-class ProcessorException extends \FuelException{}
-class FailedTransactionException extends \FuelException{}
+class ProcessorException extends \FuelException {}
+class PaymentGatewayInvalidException extends ProcessorException{}
+class FailedTransactionException extends ProcessorException{}
 
 class Processor
 {
@@ -104,7 +104,11 @@ class Processor
             throw new PaymentGatewayInvalidException('No payment gateway credentials were specified, unable to instantiate driver.',1);
         }
 
-        if(isset(static::$instance) AND isset(static::$instance[$config['gateway']])) throw new ProcessorException('Payment gateway '.$config['gateway'].' is already set.',4);
+        if(isset(static::$instance) AND isset(static::$instance[$config['gateway']])){
+            //todo: Check that credentials are the same and return the instance if trying to create a new one of the same things.
+            if(static::$instance[$config['gateway']]->get_credentials() == $config['credentials']) return static::$instance[$config['gateway']];
+            throw new ProcessorException('Payment gateway '.$config['gateway'].' is already set with different credentials.',4);
+        }
 
         $adapter = 'InfusedPay\Adapter_'.ucfirst($config['gateway']);
 

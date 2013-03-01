@@ -17,6 +17,14 @@ namespace InfusedPay;
 class Test_Adapter_Authorizenet extends \TestCase
 {
 
+    /**
+     *   - American Express Test Card: 370000000000002
+     *   - Discover Test Card: 6011000000000012
+     *   - Visa Test Card: 4007000000027
+     *   - Second Visa Test Card: 4012888818888
+     *   - JCB: 3088000000000017
+     *   - Diners Club/ Carte Blanche: 38000000000006
+     */
 
     public function setUp()
     {
@@ -25,12 +33,12 @@ class Test_Adapter_Authorizenet extends \TestCase
         $this->invalid_gateway = 'not_valid';
 
         $this->authnet_gateway = 'authorizenet';
-        $this->authnet_test_credentials = array('transaction_key'=>'','api_id'=>'');
+        $this->authnet_test_credentials = array('transaction_key'=>'6gcp7XSJ95v65V7h','api_id'=>'455MZv5xMq');
         $this->authnet_invalid_format_credentials = array('wrong_key'=>'','wrong_id'=>'');
 
         $this->charge_transaction = Model_Transaction::forge(array(
             'amount' => 1,
-            'card_number' => '4111111111111111',
+            'card_number' => '4007000000027',
             'card_expiration' => strtotime("+1 year")
         ));
 
@@ -124,7 +132,7 @@ class Test_Adapter_Authorizenet extends \TestCase
     {
         $bad_cc_transaction = Model_Transaction::forge(array(
             'amount' => 1,
-            'card_number' => '4111111111',
+            'card_number' => '0000000000',
             'card_expiration' => strtotime("+1 year")
         ));
 

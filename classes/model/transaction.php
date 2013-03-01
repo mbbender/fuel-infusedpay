@@ -37,7 +37,8 @@ class Model_Transaction extends \Orm\Model
         'ship_to_first',
         'ship_to_last',
         'ship_to_company',
-        'ship_to_address',
+        'ship_to_address1',
+        'ship_to_address2',
         'ship_to_city',
         'ship_to_state',
         'ship_to_zipcode',
@@ -45,7 +46,8 @@ class Model_Transaction extends \Orm\Model
         'bill_to_first',
         'bill_to_last',
         'bill_to_company',
-        'bill_to_address',
+        'bill_to_address1',
+        'bill_to_address2',
         'bill_to_city',
         'bill_to_state',
         'bill_to_zipcode',
@@ -86,7 +88,8 @@ class Model_Transaction extends \Orm\Model
             'bill_to_first' => $this->bill_to_first,
             'bill_to_last' => $this->bill_to_last,
             'bill_to_company' => $this->bill_to_company,
-            'bill_to_address' => $this->bill_to_address,
+            'bill_to_address1' => $this->bill_to_address1,
+            'bill_to_address2' => $this->bill_to_address2,
             'bill_to_city' => $this->bill_to_city,
             'bill_to_state' => $this->bill_to_state,
             'bill_to_zipcode' => $this->bill_to_zipcode,
@@ -106,7 +109,8 @@ class Model_Transaction extends \Orm\Model
             'ship_to_first' => $this->ship_to_first,
             'ship_to_last' => $this->ship_to_last,
             'ship_to_company' => $this->ship_to_company,
-            'ship_to_address' => $this->ship_to_address,
+            'ship_to_address1' => $this->ship_to_address1,
+            'ship_to_address2' => $this->ship_to_address2,
             'ship_to_city' => $this->ship_to_city,
             'ship_to_state' => $this->ship_to_state,
             'ship_to_zipcode' => $this->ship_to_zipcode,
@@ -123,5 +127,14 @@ class Model_Transaction extends \Orm\Model
             'card_cvv' => $this->card_cvv,
             'card_expiration' => $this->card_expiration
         );
+    }
+
+    public function delete($cascade=null,$use_transaction=false)
+    {
+        foreach($this->lineitems as $lineitem)
+        {
+            $lineitem->delete();
+        }
+        parent::delete($cascade,$use_transaction);
     }
 }
