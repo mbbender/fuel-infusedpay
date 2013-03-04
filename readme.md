@@ -20,10 +20,11 @@ Run the migration (make sure you have your package path set in config FuelPHP V 
 Now go use the dern thang!
 
 ## Common Usage
-Coming soon...
+To process transactions you need a model that implements the TransactionProcessor interface.
 
 ## Add your own gateway
-Coming soon...
+ * Create an adapter in classes > adapter and implement all required functions
+ * Create a model in responses of the like named adapter and a migration script to add the database table for raw gateway response logging
 
 ## Fully Tested
 To run tests you must configure the authorizenet.php config with valid test system credentials, and if you have changed the

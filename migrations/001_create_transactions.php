@@ -9,6 +9,7 @@ class Create_transactions
 	{
 		\DBUtil::create_table('transactions', array(
 			'id' => array('type' => 'int unsigned', 'auto_increment' => true),
+            'processor' => array('constraint'=>50, 'type'=>'varchar'),
 			'third_party_transaction_id' => array('constraint'=>50, 'type'=>'varchar'),
             'type' => array('constraint'=>50, 'type'=>'varchar'),
             'ship_to_first' => array('constraint'=>255, 'type'=>'varchar', 'null'=>true),

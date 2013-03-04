@@ -11,6 +11,7 @@ namespace InfusedPay;
 
 interface TransactionProcessor
 {
+    public function set_processor(Model_ProcessorInfo $processor);
     public function get_gateway();
     public function get_gateway_credentials();
 }

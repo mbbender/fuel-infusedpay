@@ -60,6 +60,10 @@ class FailedTransactionException extends ProcessorException{}
 
 class Processor
 {
+    const TYPE_CHARGE = 'charge';
+    const TYPE_REFUND = 'refund';
+    const TYPE_VOID = 'void';
+
     /**
      * An array of created processor instances.
      * @var null
@@ -160,7 +164,7 @@ class Processor
     {
         if(empty(static::$instance)) throw new ProcessorException('Must initialize a processor before calling charge().',1);
         reset(static::$instance);
-        current(static::$instance)->charge($transaction);
+        current(static::$instance)->process(self::TYPE_CHARGE,$transaction);
     }
 
     // Convenience method for default (first) instance
@@ -168,7 +172,7 @@ class Processor
     {
         if(empty(static::$instance)) throw new ProcessorException('Must initialize a processor before calling refund().',2);
         reset(static::$instance);
-        current(static::$instance)->refund($transaction);
+        current(static::$instance)->process(self::TYPE_REFUND,$transaction);
     }
 
     // Convenience method for default (first) instance
@@ -176,7 +180,7 @@ class Processor
     {
         if(empty(static::$instance)) throw new ProcessorException('Must initialize a processor before calling void().',3);
         reset(static::$instance);
-        current(static::$instance)->void($transaction);
+        current(static::$instance)->process(self::TYPE_VOID,$transaction);
     }
 
     /**

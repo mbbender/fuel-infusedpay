@@ -20,13 +20,10 @@ class Adapter_Paypal extends Adapter
 
     }
 
-    protected function _format_transaction(Model_Transaction $t)
+    public function _log_response($response)
     {
 
     }
 
-    protected function _process_response($response)
-    {
 
-    }
 }

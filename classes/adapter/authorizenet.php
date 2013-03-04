@@ -5,7 +5,6 @@ namespace InfusedPay;
 // @todo: Create a bootstrap that adds all these libraries to the InfusedPay namespace on init of this adapter
 require_once __DIR__.'/../../vendor/anet_php_sdk/AuthorizeNet.php';
 
-
 class Adapter_Authorizenet extends Adapter
 {
     const NAME = 'authorizenet';
@@ -77,9 +76,9 @@ class Adapter_Authorizenet extends Adapter
                 break;
         }
 
-        $gateway_response = $this->_process_response($response);
+        $this->_process_response($response);
         $trans->third_party_transaction_id = $response->transaction_id;
-        return $gateway_response;
+        return $response;
     }
 
     /**
@@ -93,13 +92,69 @@ class Adapter_Authorizenet extends Adapter
     {
         $amount = empty($amount) ? $trans->amount : $amount;
         $gateway_response = $this->api->credit($trans->third_party_transaction_id,$amount,$trans->card_number);
-        return $this->_process_response($gateway_response);
+        $this->_process_response($gateway_response);
+        return $gateway_response;
     }
 
     protected function _void(Model_Transaction $trans)
     {
         $gateway_response = $this->api->void($trans->third_party_transaction_id);
-        return $this->_process_response($gateway_response);
+        $this->_process_response($gateway_response);
+        return $gateway_response;
+    }
+
+    protected function _log_response($response)
+    {
+        $data = array();
+        foreach($response as $key=>$val)
+        {
+            switch($key){
+                case 'authorization_code':
+                    $data['x_auth_code'] = $val;
+                    break;
+                case 'avs_response':
+                    $data['x_avs_code'] = $val;
+                    break;
+                case 'transaction_id':
+                    $data['x_trans_id'] = $val;
+                    break;
+                case 'invoice_number':
+                    $data['x_invoice_num'] = $val;
+                    break;
+                case 'transaction_type':
+                    $data['x_type'] = $val;
+                    break;
+                case 'customer_id':
+                    $data['x_cust_id'] = $val;
+                    break;
+                case 'email_address':
+                    $data['x_email'] = $val;
+                    break;
+                case 'purchase_order_number':
+                    $data['x_po_num'] = $val;
+                    break;
+                case 'md5_hash':
+                    $data['x_MD5_Hash'] = $val;
+                    break;
+                case 'card_code_response':
+                    $data['x_cvv2_resp_code'] = $val;
+                    break;
+                default:
+                    $data['x_'.$key] = $val;
+                    break;
+            }
+
+        }
+
+        try{
+            $r = Model_Response_Authnet::forge($data);
+            if($r->save()) return true;
+            else throw new AdapterException('Failed to log raw gateway response: '.json_encode($response));
+        }
+        catch(\Database_Exception $e)
+        {
+            throw new AdapterException('Failed to log raw gateway response: '.json_encode($response).'. Due to: '.$e->getMessage());
+        }
     }
 
     protected function _format_transaction(Model_Transaction $t)

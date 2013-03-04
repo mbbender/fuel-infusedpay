@@ -32,6 +32,7 @@ class Model_Transaction extends \Orm\Model
 
     protected static $_properties = array(
         'id',
+        'processor',
         'third_party_transaction_id',
         'type',
         'ship_to_first',

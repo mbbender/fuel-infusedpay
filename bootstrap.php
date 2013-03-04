@@ -26,6 +26,7 @@ Autoloader::add_classes(array(
     'InfusedPay\\Adapter'                          => __DIR__.'/classes/adapter.php',
     'InfusedPay\\AdapterException'                 => __DIR__.'/classes/adapter.php',
     'InfusedPay\\Adapter_Authorizenet'             => __DIR__.'/classes/adapter/authorizenet.php',
+    'InfusedPay\\Model_Response_Authnet'             => __DIR__.'/classes/model/response/authnet.php',
 
     'InfusedPay\\Adapter_Paypal'                   => __DIR__.'/classes/adapter/paypal.php',
 
