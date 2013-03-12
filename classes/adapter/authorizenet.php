@@ -49,9 +49,7 @@ class Adapter_Authorizenet extends Adapter
         }
 
         // this is sepcific to AIM
-        // Commented out on 3/13/2013 mbb - This setting puts the system in test mode, which is different than using
-        // the test API.
-        //$this->api->setSandbox($this->debug);
+        $this->api->setSandbox($this->debug);
     }
 
     /*
@@ -65,7 +63,7 @@ class Adapter_Authorizenet extends Adapter
         // Set Debug Mode if card is a test card number
         // Commented out on 3/13/2013 mbb - This setting puts the system in test mode, which is different than using
         // the test API.
-        //if(in_array($trans->card_number,$this->test_cards)) $this->api->setSandbox(true);
+        if(in_array($trans->card_number,$this->test_cards)) $this->api->setSandbox(true);
 
         if(empty($method)) $method = static::AUTH_CAPTURE;
 
