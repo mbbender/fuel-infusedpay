@@ -63,7 +63,9 @@ class Adapter_Authorizenet extends Adapter
         $this->_format_transaction($trans);
 
         // Set Debug Mode if card is a test card number
-        if(in_array($trans->card_number,$this->test_cards)) $this->api->setSandbox(true);
+        // Commented out on 3/13/2013 mbb - This setting puts the system in test mode, which is different than using
+        // the test API.
+        //if(in_array($trans->card_number,$this->test_cards)) $this->api->setSandbox(true);
 
         if(empty($method)) $method = static::AUTH_CAPTURE;
 
