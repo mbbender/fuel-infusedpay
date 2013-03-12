@@ -12,7 +12,7 @@ class Adapter_Authorizenet extends Adapter
     protected $api;
 
     protected $debug = false;
-    protected $test_cards =  ['370000000000002','6011000000000012','4007000000027','4012888818888','3088000000000017','38000000000006'];
+    protected $test_cards =  array('370000000000002','6011000000000012','4007000000027','4012888818888','3088000000000017','38000000000006');
 
     protected $transaction_key;
     protected $api_id;
