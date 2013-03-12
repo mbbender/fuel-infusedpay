@@ -49,7 +49,9 @@ class Adapter_Authorizenet extends Adapter
         }
 
         // this is sepcific to AIM
-        $this->api->setSandbox($this->debug);
+        // Commented out on 3/13/2013 mbb - This setting puts the system in test mode, which is different than using
+        // the test API.
+        //$this->api->setSandbox($this->debug);
     }
 
     /*
