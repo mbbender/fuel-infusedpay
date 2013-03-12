@@ -76,7 +76,7 @@ class Adapter_Authorizenet extends Adapter
                 break;
         }
 
-        $this->_process_response($response);
+        $this->_process_response($response,$trans);
         $trans->third_party_transaction_id = $response->transaction_id;
         return $response;
     }
@@ -99,7 +99,7 @@ class Adapter_Authorizenet extends Adapter
     protected function _void(Model_Transaction $trans)
     {
         $gateway_response = $this->api->void($trans->third_party_transaction_id);
-        $this->_process_response($gateway_response);
+        $this->_process_response($gateway_response,$trans);
         return $gateway_response;
     }
 
