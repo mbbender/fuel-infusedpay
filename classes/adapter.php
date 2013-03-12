@@ -56,6 +56,24 @@ abstract class Adapter
         else throw new AdapterException('Unsupported transaction type: '.$type);
     }
 
+    // Convenience method
+    public function charge(Model_Transaction $transaction)
+    {
+       return $this->process(Processor::TYPE_CHARGE, $transaction);
+    }
+
+    // Convenience method for default (first) instance
+    public function refund(Model_Transaction $transaction)
+    {
+        return $this->process(Processor::TYPE_REFUND, $transaction);
+    }
+
+    // Convenience method for default (first) instance
+    public function void(Model_Transaction $transaction)
+    {
+        return $this->process(Processor::TYPE_VOID, $transaction);
+    }
+
     public function get_credentials()
     {
         return $this->_credentials;

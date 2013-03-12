@@ -92,7 +92,7 @@ class Adapter_Authorizenet extends Adapter
     {
         $amount = empty($amount) ? $trans->amount : $amount;
         $gateway_response = $this->api->credit($trans->third_party_transaction_id,$amount,$trans->card_number);
-        $this->_process_response($gateway_response);
+        $this->_process_response($gateway_response,$trans);
         return $gateway_response;
     }
 
@@ -244,7 +244,7 @@ class Adapter_Authorizenet extends Adapter
     }
 
     // Should return TRUE if all went well or throw a FailedTransactionException
-    protected function _process_response($response)
+    protected function _process_response($response,$transaction)
     {
         $ret_val = false;
         switch($response->response_code)
@@ -252,6 +252,9 @@ class Adapter_Authorizenet extends Adapter
             // Approved
             case 1:
                 $ret_val = true;
+                // Authorize.net puts some tax in the duty column for some reason on occasion and we need it to be
+                // declared as tax.
+                if($response->duty != 0) $transaction->tax += $response->duty;
                 break;
             // Declined
             case 2:
